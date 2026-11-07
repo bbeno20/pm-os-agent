@@ -49,6 +49,7 @@ MAX_ITERATIONS = int(os.environ.get("CORTEX_MAX_ITERATIONS", "8"))
 MAX_REVISIONS = int(os.environ.get("CORTEX_MAX_REVISIONS", "2"))
 COST_CAP_USD = float(os.environ.get("CORTEX_COST_CAP_USD", "0.50"))
 MAX_QUEUE_ITEMS = int(os.environ.get("CORTEX_MAX_QUEUE_ITEMS", "10"))
+MAX_FAILED_PULLS = int(os.environ.get("CORTEX_MAX_FAILED_PULLS", "3"))
 # Rough $ per 1M tokens for your chosen model, set to match its pricing.
 PRICE_IN = float(os.environ.get("CORTEX_PRICE_IN_PER_M", "0.15"))
 PRICE_OUT = float(os.environ.get("CORTEX_PRICE_OUT_PER_M", "0.60"))
@@ -154,6 +155,7 @@ def run(which: str = "happy") -> None:
     ]
     source_log: list[str] = [task["body"]]
     revisions = 0
+    failed_pulls = 0
     last_draft = ""
 
     for step in range(1, MAX_ITERATIONS + 1):
@@ -180,6 +182,15 @@ def run(which: str = "happy") -> None:
                 print(f"          -> {json.dumps(result)[:300]}")
                 messages.append({"role": "tool", "tool_call_id": call.id,
                                  "content": json.dumps(result)})
+                if fn in ("get_project", "get_activity"):
+                    failed_pulls = failed_pulls + 1 if "error" in result else 0
+
+            if failed_pulls >= MAX_FAILED_PULLS:
+                reason = f"{MAX_FAILED_PULLS} consecutive failed data pulls (stuck condition)"
+                banner(f"STUCK, {reason}. Halting and escalating to a human.")
+                emit_deliverable(which, last_draft, accepted=False,
+                                 reason=reason, cost=bounds.cost)
+                return
             continue
 
         # No tool calls => Cortex produced a proposed output. Validate it.
@@ -195,6 +206,13 @@ def run(which: str = "happy") -> None:
         print(json.dumps({k: v for k, v in verdict.items() if k != "_usage"}, indent=2))
 
         if verdict["verdict"] == "pass":
+            if "ESCALATE" in proposed:
+                banner(f"ESCALATE EXIT, Cortex could not proceed and is handing off "
+                       f"to a human. Nothing posted, no commitments made. "
+                       f"Run cost ≈ ${bounds.cost:.4f}")
+                emit_deliverable(which, proposed, accepted=False,
+                                 reason="Cortex self-escalated", cost=bounds.cost)
+                return
             banner(f"HITL CHECKPOINT, status update + any proposed stories queued for "
                    f"your review. Nothing posted, no commitments made. "
                    f"Run cost ≈ ${bounds.cost:.4f}")
