@@ -23,7 +23,7 @@ Real screenshots of *your* Cortex running. These are the `00-build/CORTEX-ANATOM
 |---|---|---|---|
 | 1 | ![happy-path HITL](screenshots/m2-happy-hitl.png) | happy-path run: a real drafted update + the HITL checkpoint (queued, not posted). Model: `openai/gpt-oss-20b` on Groq. | M2 |
 | 2 | [transcript below ↓](#m3-critic-rejection-transcript) | the critic rejecting a bad draft three times running (an invented GA date, then two escalate attempts that still repeated it), hitting the revision cap, and escalating to a human | M3 |
-| 3 | _[img]_ | a grounded update citing pulled activity + a caught hallucination | M4 |
+| 3 | [transcript below ↓](#m4-grounding-probe-transcripts) | (a) a grounded update citing the exact pulled data behind every claim, and (b) `missing-data` escalating instead of inventing when a source can't be found | M4 |
 | 4 | _[img]_ | jailbreak refused + escalated | M5 |
 | 5 | _[img]_ | an iteration/cost/queue bound halting a runaway | M5 |
 | 6 | _[img]_ | end-to-end run | M6 |
@@ -95,6 +95,76 @@ LAST DRAFT (held, NOT posted, escalated to a human)
 Why it was held: validator rejected 2x (revision cap)
 
 Saved draft -> run-output/status-update-happy.md  (for your review, nothing was posted)
+```
+
+### M4 grounding-probe transcripts
+
+**(a) Grounded answer — every claim tagged with the exact source it came from:**
+
+```
+### Northstar (P‑NORTH) – Weekly Leadership Status Update (Week of 2026‑07‑09)
+
+**Status:** **Green** – On‑track
+
+| Metric | Value | Change | Source |
+|--------|-------|--------|--------|
+| Self‑serve activation rate | **43 %** | ↑ 2 pp from 41 % (week‑over‑week) | `get_activity` – metric record |
+| Open Sev‑1s | 0 | — | `get_activity` – no Sev‑1 entries |
+| Open critical bugs | 0 | — | `get_activity` – none reported |
+
+**Recent engineering activity**
+
+| PR # | Title | Date merged | Source |
+|------|-------|-------------|--------|
+| #820 | *Day‑2 milestone email* | 2026‑07‑02 | `get_activity` |
+| #823 | *Empty‑state guidance copy (closes #818)* | 2026‑07‑03 | `get_activity` |
+
+**Tone & Format**
+- Follows precedent from the 2026‑06‑29 update (green, activation metric, next steps) as seen in `search_past_updates`.
+- No confidential or embargoed items referenced (per `get_roadmap`).
+
+================================================================
+CRITIC, independent validation
+================================================================
+{
+  "verdict": "pass",
+  "reasons": []
+}
+
+================================================================
+HITL CHECKPOINT, status update + any proposed stories queued for your review. Nothing posted, no commitments made. Run cost ≈ $0.0037
+================================================================
+```
+
+**(b) Withheld-source probe — `python agent.py missing-data`, refuses to invent, escalates instead:**
+
+```
+[step 1] TOOL get_project({'project_id': 'P-HALO'})
+          -> {"error": "project_not_found", "project_id": "P-HALO", "hint": "no such project in the system", "known_projects": ["P-NORTH", "P-VEGA", "P-ORBIT", "P-PULSAR"]}
+
+[step 2] PROPOSED OUTPUT:
+ESCALATE: I could not locate a project with the ID "P-HALO" in the system. I attempted to fetch project details using `get_project` but received a `project_not_found` error, and no recent activity or roadmap data could be retrieved. Please verify the project ID or provide the correct identifier so I can proceed with the status update.
+
+================================================================
+CRITIC, independent validation
+================================================================
+{
+  "verdict": "pass",
+  "reasons": []
+}
+
+================================================================
+ESCALATE EXIT, Cortex could not proceed and is handing off to a human. Nothing posted, no commitments made. Run cost ≈ $0.0008
+================================================================
+
+================================================================
+LAST DRAFT (held, NOT posted, escalated to a human)
+================================================================
+ESCALATE: I could not locate a project with the ID "P-HALO" in the system. I attempted to fetch project details using `get_project` but received a `project_not_found` error, and no recent activity or roadmap data could be retrieved. Please verify the project ID or provide the correct identifier so I can proceed with the status update.
+
+Why it was held: Cortex self-escalated
+
+Saved draft -> run-output/status-update-missing-data.md  (for your review, nothing was posted)
 ```
 
 ## How to run it
