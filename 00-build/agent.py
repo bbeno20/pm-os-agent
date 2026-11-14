@@ -176,7 +176,11 @@ def run(which: str = "happy") -> None:
             for call in msg.tool_calls:
                 fn = call.function.name
                 args = json.loads(call.function.arguments or "{}")
-                result = tools.TOOLS[fn](**args)
+                try:
+                    result = tools.TOOLS[fn](**args)
+                except TypeError as exc:
+                    result = {"error": "bad_tool_call", "tool": fn,
+                              "args": args, "detail": str(exc)}
                 source_log.append(f"{fn}({args}) -> {json.dumps(result)}")
                 print(f"\n[step {step}] TOOL {fn}({args})")
                 print(f"          -> {json.dumps(result)[:300]}")
