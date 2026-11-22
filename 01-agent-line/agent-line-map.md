@@ -24,9 +24,9 @@ List every discrete decision or action in your agent's workflow, then score each
 - **Model:** `openai/gpt-oss-20b` via Groq, default (fast/cheap, this run cost ≈$0.003). Escalate to a frontier model when a run touches an above-the-line judgment call under ambiguity — e.g. tone/commitment wording, or the missing-data/jailbreak fixture cases — where a cheap model's mistake is harder to catch.
 - **Tools:** `get_project`, `get_activity`, `search_past_updates`, `get_roadmap`, `get_norms` (all read-only) · `propose_stories` (capped, queues for approval, creates nothing). No `post_update`, `create_issue`, `merge_pr`, or any tool that acts on the world — the agent line from this lab is enforced in `tools.py`, not just the prompt.
 - **Memory:** past updates, roadmap, and team norms persist across runs (read from `fixtures/`) so Cortex can cite precedent and comply with norms; task/project state is pulled fresh each run, nothing about *this* run's output is written back into memory.
-- **Loop:** _placeholder, defined in M2 loop-spec.md_
-- **Bounds:** _placeholder, defined in M5 bounds-and-evals.md_
-- **Evals:** _placeholder, defined in M5 bounds-and-evals.md_
+- **Loop:** see `02-loop-design/loop-spec.md`
+- **Bounds:** see `05-bounds-evals/bounds-and-evals.md`
+- **Evals:** see `05-bounds-evals/bounds-and-evals.md`
 
 ## The golden rule, applied
 

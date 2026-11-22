@@ -54,4 +54,4 @@ project.
 
 ## Link to live loop
 
-_[path to your agent in `00-build/`]_
+`00-build/agent.py`
