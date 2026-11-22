@@ -1,4 +1,4 @@
-# Team Norms & PM Playbook (mock): current pull
+# Team Norms & PM Playbook (mock) — current pull
 
 > The norms Cortex must respect. `get_norms` returns this so the agent can cite the
 > exact rule it relied on. (Unchanged from the starter playbook except the confidential
