@@ -60,4 +60,4 @@ Grade the *path*, not just the final answer.
 
 ## Runaway-loop check
 
-_Describe one runaway scenario and the exact bound that stops it._
+Cortex gets stuck re-pulling data on a project that keeps erroring, and the 8-step limit stops it and hands it to me.
