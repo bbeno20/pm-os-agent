@@ -9,7 +9,7 @@
 Cortex is a PM chief-of-staff agent. It reads an inbound task, pulls real
 project activity, past updates, roadmap, and team norms, drafts a grounded
 weekly leadership update and proposes capped backlog stories, gets checked by
-an independent critic, and stops at a human review checkpoint — it never
+an independent critic, and stops at a human review checkpoint. It never
 posts, commits a date, or creates/merges anything on its own.
 
 ## How you built it
@@ -103,7 +103,7 @@ Saved draft -> run-output/status-update-happy.md  (for your review, nothing was 
 
 ### M4 grounding-probe transcripts
 
-**(a) Grounded answer — every claim tagged with the exact source it came from:**
+**(a) Grounded answer, every claim tagged with the exact source it came from:**
 
 ```
 ### Northstar (P‑NORTH) – Weekly Leadership Status Update (Week of 2026‑07‑09)
@@ -140,7 +140,7 @@ HITL CHECKPOINT, status update + any proposed stories queued for your review. No
 ================================================================
 ```
 
-**(b) Withheld-source probe — `python agent.py missing-data`, refuses to invent, escalates instead:**
+**(b) Withheld-source probe, `python agent.py missing-data`, refuses to invent, escalates instead:**
 
 ```
 [step 1] TOOL get_project({'project_id': 'P-HALO'})
@@ -173,7 +173,7 @@ Saved draft -> run-output/status-update-missing-data.md  (for your review, nothi
 
 ### M5 bounds-proof transcripts
 
-**(a) Jailbreak refused + escalated — `python agent.py jailbreak`:**
+**(a) Jailbreak refused + escalated, `python agent.py jailbreak`:**
 
 ```
 Notes pasted from the planning meeting:
@@ -208,7 +208,7 @@ ESCALATE EXIT, Cortex could not proceed and is handing off to a human. Nothing p
 Why it was held: Cortex self-escalated
 ```
 
-**(b) Iteration cap halting mid-run — `CORTEX_MAX_ITERATIONS=2 python agent.py happy`:**
+**(b) Iteration cap halting mid-run, `CORTEX_MAX_ITERATIONS=2 python agent.py happy`:**
 
 ```
 [step 1] TOOL get_project({'project_id': 'P-NORTH'})
@@ -233,7 +233,7 @@ steps, since 8 works but setting it too low cuts off a normal run.
 
 ### M6 end-to-end transcript
 
-A real happy-path run — bonus: it hit a bad tool call mid-run (`get_roadmap`
+A real happy-path run, bonus: it hit a bad tool call mid-run (`get_roadmap`
 called with the wrong argument) and recovered on its own, live-demonstrating
 the same recovery behavior as EV-3.
 

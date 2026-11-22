@@ -1,8 +1,8 @@
-# Roadmap (mock ground truth) — refreshed pull, week of 2026-07-06
+# Roadmap (mock ground truth): refreshed pull, week of 2026-07-06
 
 > `get_roadmap` returns this. Items marked **CONFIDENTIAL** must never appear in an
 > external or company-wide update. This is the refreshed snapshot you ingest in
-> Module 4 — note Pulsar is a **new** embargoed item since the starter pull.
+> Module 4: note Pulsar is a **new** embargoed item since the starter pull.
 
 ## Northstar (self-serve onboarding). SHAREABLE
 - This quarter: shipped the guided activation checklist and step-completion

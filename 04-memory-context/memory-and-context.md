@@ -9,11 +9,11 @@
 ## 1. Context budget
 
 Priority order if something has to be trimmed (highest priority first):
-1. `get_activity` — correctness of every claim depends on it.
-2. `get_roadmap` — confidentiality/embargo risk if mishandled.
-3. `get_norms` — compliance; the critic checks against current rules.
-4. `search_past_updates` — tone/precedent, nice-to-have.
-5. `get_task` — always included; trivial size, never cut.
+1. `get_activity`: correctness of every claim depends on it.
+2. `get_roadmap`: confidentiality/embargo risk if mishandled.
+3. `get_norms`: compliance; the critic checks against current rules.
+4. `search_past_updates`: tone/precedent, nice-to-have.
+5. `get_task`: always included; trivial size, never cut.
 
 ## 2. Retrieve vs. long-context: per source
 
@@ -21,11 +21,11 @@ For each data source, decide: **retrieve** (narrow a large/changing corpus to th
 
 | Source | Size / volatility | Decision | Why |
 |---|---|---|---|
-| `get_task` | tiny, fixed per run | Long-context | Deciding factor: size — inject directly, no retrieval needed. |
-| `get_activity` | large, changes daily | Retrieve | Deciding factor: volatility — today's ingest alone added new PRs/metrics. |
-| `search_past_updates` | unbounded, append-only | Retrieve | Deciding factor: size — grows forever, can't be stuffed into context. |
-| `get_roadmap` | medium, confidential flags | Retrieve | Deciding factor: citation/audit — needs an explicit check point before a confidential item could leak. |
-| `get_norms` | medium, occasionally updated | Retrieve | Deciding factor: volatility — must stay current, not a frozen copy. |
+| `get_task` | tiny, fixed per run | Long-context | Deciding factor: size. Inject directly, no retrieval needed. |
+| `get_activity` | large, changes daily | Retrieve | Deciding factor: volatility. Today's ingest alone added new PRs/metrics. |
+| `search_past_updates` | unbounded, append-only | Retrieve | Deciding factor: size. Grows forever, can't be stuffed into context. |
+| `get_roadmap` | medium, confidential flags | Retrieve | Deciding factor: citation/audit. Needs an explicit check point before a confidential item could leak. |
+| `get_norms` | medium, occasionally updated | Retrieve | Deciding factor: volatility. Must stay current, not a frozen copy. |
 
 ## 3. Retrieval quality plan
 
@@ -34,7 +34,7 @@ For each data source, decide: **retrieve** (narrow a large/changing corpus to th
 | `get_activity` | | ✓ | | ✓ | | Invented/stale numbers; PRs/issues bleeding in from other projects. |
 | `search_past_updates` | | ✓ | ✓ | | | Falling back to an unrelated project's precedent (seen in the `missing-data` run) or copying an outdated update. |
 | `get_roadmap` | | ✓ | | ✓ | | A CONFIDENTIAL/embargoed item leaking into an external or company-wide update. |
-| `get_norms` | | | | ✓ | | Enforcing a stale rule — caching was deliberately rejected here to avoid this risk entirely. |
+| `get_norms` | | | | ✓ | | Enforcing a stale rule. Caching was deliberately rejected here to avoid this risk entirely. |
 
 ## 4. Memory map (your PM brain)
 
@@ -42,7 +42,7 @@ For each data source, decide: **retrieve** (narrow a large/changing corpus to th
 |---|---|---|
 | **Working** (in-loop) | Pulled source data (activity, roadmap, norms, past-update matches), the in-progress draft, the critic's verdict/reasons | This run only; discarded at run end |
 | **Episodic** (past runs) | Handled message IDs (hook dedupe); last approved update per project | Message IDs: 30-day TTL. Last approved update: persists until replaced by the next *human-approved* update, scoped per project; flagged stale if older than 2 sprints |
-| **Semantic** (durable facts/prefs) | Not needed yet, because the norms/roadmap retrieval already covers it | — |
+| **Semantic** (durable facts/prefs) | Not needed yet, because the norms/roadmap retrieval already covers it | n/a |
 | **Shared** (across agents) | Source data + current draft, shared between Cortex and the critic (critic's own reasoning stays isolated) | Scoped to a single validation call; discarded once that call returns a verdict |
 
 ## 5. Memory risks & mitigations

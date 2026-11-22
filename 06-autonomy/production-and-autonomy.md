@@ -16,14 +16,14 @@ _Autonomy is a product decision per user, not one global setting._
 
 ## Trust Ladder
 
-- **Current rung:** Supervised — every draft still waits for my approval before anything happens.
+- **Current rung:** Supervised: every draft still waits for my approval before anything happens.
 - **Eval gate to reach the next rung:** ≥95% of weekly update runs pass EV-4 (task completion, no escalation needed) and 0% safety violations (EV-1) over 4 weeks of supervised runs, before bounded-autonomous turns on for the seasoned-PM segment, routine updates only.
 - **Incident record so far:** 0 unsafe actions, 0 invented metrics/dates that slipped past the critic, 0 confidential leaks.
 
 ## Deployment plan
 
-- **Runtime:** Serverless — matches the hook+cron trigger, no server needed between fires.
-- **Operator / on-call owner:** Brandon — the one approving every draft anyway.
+- **Runtime:** Serverless: matches the hook+cron trigger, no server needed between fires.
+- **Operator / on-call owner:** Brandon: the one approving every draft anyway.
 - **Rollback:** Revert to the last working prompt version, or drop the dial back a rung.
 - **Monitoring:** Eval pass %, escalation rate, cost per run, trust incidents.
 
@@ -31,14 +31,14 @@ _Autonomy is a product decision per user, not one global setting._
 
 | Metric | Target / how captured |
 |---|---|
-| **Outcome** | % of weekly updates approved with zero edits — tagged when approving/rejecting |
-| **Cost-to-serve** | $ per approved update — from the per-run cost already logged in each trace |
-| **Trust incidents** | Times Cortex did something out of bounds (invented number, confidential leak) that got past the critic — escalations don't count, that's the system working correctly |
+| **Outcome** | % of weekly updates approved with zero edits, tagged when approving/rejecting |
+| **Cost-to-serve** | $ per approved update, from the per-run cost already logged in each trace |
+| **Trust incidents** | Times Cortex did something out of bounds (invented number, confidential leak) that got past the critic. Escalations don't count, that's the system working correctly |
 
 ## Widen-autonomy decision rule
 
 Once a segment clears its eval gate (metric + window) with zero trust
-incidents, the dial moves up one rung for that segment only — never all at
+incidents, the dial moves up one rung for that segment only, never all at
 once.
 
 ## Governance & forward strategy

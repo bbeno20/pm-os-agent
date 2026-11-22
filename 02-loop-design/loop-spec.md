@@ -17,7 +17,7 @@ missed, so the update is always ready on time. Heartbeat is ruled out because it
 wastes runs when nothing changed. Goal is ruled out because it can run away with
 no clock to stop it.
 
-**Idempotency:** dedupe by message ID — before drafting, Cortex checks whether it
+**Idempotency:** dedupe by message ID: before drafting, Cortex checks whether it
 has already handled that message ID, and if so, skips it.
 
 ## 2. Goal / definition of done
@@ -46,8 +46,8 @@ project.
 |---|---|
 | **Work tree** (isolated workspace per run, a git worktree) | Not needed yet, because Cortex only reads and drafts, so runs can't collide. |
 | **Skills** (reusable capabilities) | Not needed yet, because it only does one narrow job. |
-| **Plugins / connectors** (tools & access, optional if you don't have one yet) | Not wired yet, reads fake data for now. Plan: GitHub (PR/issue activity), Jira (sprint/ticket status), Google Drive (PRD) — all read-only, Cortex can look but never change anything. |
-| **Subagents** (independent check when the loop can't grade itself) | Already have one: the critic in `critic.py` — checks the draft without seeing how it was written. |
+| **Plugins / connectors** (tools & access, optional if you don't have one yet) | Not wired yet, reads fake data for now. Plan: GitHub (PR/issue activity), Jira (sprint/ticket status), Google Drive (PRD), all read-only, Cortex can look but never change anything. |
+| **Subagents** (independent check when the loop can't grade itself) | Already have one: the critic in `critic.py`, checks the draft without seeing how it was written. |
 | **State tracking** | Handled message IDs (dedupe) + last approved update per project, scoped per project. |
 
 > Context plan (M4) and the hand-off to bounds & evals (M5) come in later modules, you'll add them to their own deliverables then, not here.

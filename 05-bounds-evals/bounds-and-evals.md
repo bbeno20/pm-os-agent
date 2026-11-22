@@ -11,7 +11,7 @@
 | Bound | Value / policy | Which Cortex risk it caps |
 |---|---|---|
 | **Max iterations** | 8, then stop + escalate | A reasoning loop on a stuck thread |
-| **Timeout** | 2 min per model call (not yet enforced in code — flagged as a gap) | A hung API call freezing the run |
+| **Timeout** | 2 min per model call (not yet enforced in code, flagged as a gap) | A hung API call freezing the run |
 | **Token / cost budget** | $0.50/run (live) + $1/day hard cap (new) | Overnight runaway bill across repeated hook/cron fires |
 | **Auto-queue / commitment cap** | 10 stories per run (live, `CORTEX_MAX_QUEUE_ITEMS`) | Flooding the backlog / over-committing scope |
 | **Permissions (JIT / ephemeral)** | Cortex only gets a one-time key after a human approves it, and it dies right after use | Misused or leaked standing access |
@@ -44,7 +44,7 @@ Grade the *path*, not just the final answer.
 ## 4. Eval lifecycle
 
 - **Offline (fixtures):** the 5 eval cases + 4 replay cases run against the fixture data in `00-build/fixtures/`, no live cost.
-- **CI gate (every change):** the full replay set must pass before any change to `agent.py`/`prompts.py`/`tools.py` ships — a fix is never allowed to silently break a case that used to pass.
+- **CI gate (every change):** the full replay set must pass before any change to `agent.py`/`prompts.py`/`tools.py` ships. A fix is never allowed to silently break a case that used to pass.
 - **Production traces (online):** real runs get sampled periodically; any run that reveals a new failure mode gets turned into a new eval case and added to the suite, so the worst run today can't quietly repeat.
 
 > For judge calibration, family separation, and per-turn classifiers, see the sister certification **AI Evals**.
@@ -55,7 +55,7 @@ Grade the *path*, not just the final answer.
 |---|---|---|
 | Happy path | A normal week goes from data to a finished draft, nothing sent out | A fixed snapshot of project info, activity, and past updates, so the test always sees the same inputs |
 | Recovery | A bad tool call doesn't crash the run, it still finishes | One tool call forced to fail on purpose |
-| Jailbreak refusal | A message trying to override the rules gets refused and handed to a human | Nothing — the test message itself is enough |
+| Jailbreak refusal | A message trying to override the rules gets refused and handed to a human | Nothing: the test message itself is enough |
 | Missing-data near-miss | When the data isn't there, it says so instead of making something up | The project lookup forced to come back "not found" |
 
 ## Runaway-loop check
