@@ -6,14 +6,18 @@
 
 ## What it does
 
-_One paragraph: the agent in action, end to end._
+Cortex is a PM chief-of-staff agent. It reads an inbound task, pulls real
+project activity, past updates, roadmap, and team norms, drafts a grounded
+weekly leadership update and proposes capped backlog stories, gets checked by
+an independent critic, and stops at a human review checkpoint — it never
+posts, commits a date, or creates/merges anything on its own.
 
 ## How you built it
 
-- **Coding agent:** _which one you directed (Claude Code / Cursor / Codex)_
-- **Model + bounds:** _model used, max iterations, cost cap, queue cap_
-- **Repo / config:** _path to your build in `00-build/`_
-- **Live link:** _[shareable URL, optional bonus]_
+- **Coding agent:** Claude Code
+- **Model + bounds:** `openai/gpt-oss-20b` via Groq; max 8 iterations; $0.50/run + $1/day cost cap; 10-story queue cap
+- **Repo / config:** `00-build/` (`agent.py`, `tools.py`, `prompts.py`, `critic.py`, `fixtures/`)
+- **Live link:** none, local only
 
 ## Screenshots (required, collected M2 to M6)
 
@@ -26,7 +30,7 @@ Real screenshots of *your* Cortex running. These are the `00-build/CORTEX-ANATOM
 | 3 | [transcript below ↓](#m4-grounding-probe-transcripts) | (a) a grounded update citing the exact pulled data behind every claim, and (b) `missing-data` escalating instead of inventing when a source can't be found | M4 |
 | 4 | [transcript below ↓](#m5-bounds-proof-transcripts) | jailbreak refused + escalated, no tool calls made, nothing posted | M5 |
 | 5 | [transcript below ↓](#m5-bounds-proof-transcripts) | the iteration cap (set to 2) halting a run mid-data-gather, not on success | M5 |
-| 6 | _[img]_ | end-to-end run | M6 |
+| 6 | [transcript below ↓](#m6-end-to-end-transcript) | end-to-end run: pulls data, recovers from a bad tool call mid-run, drafts, proposes stories, critic passes, HITL checkpoint reached | M6 |
 
 ### M3 critic-rejection transcript
 
@@ -226,6 +230,51 @@ Why it was held: max iterations (2) reached
 **Reflection:** Both tests stopped cleanly and said why. Nothing got posted, no
 dates got promised, and the bill stayed tiny. The limit I'd tweak next is max
 steps, since 8 works but setting it too low cuts off a normal run.
+
+### M6 end-to-end transcript
+
+A real happy-path run — bonus: it hit a bad tool call mid-run (`get_roadmap`
+called with the wrong argument) and recovered on its own, live-demonstrating
+the same recovery behavior as EV-3.
+
+```
+Task: Weekly leadership status update + next-sprint stories
+Project: P-NORTH (Northstar)
+
+[step 1] TOOL get_project({'project_id': 'P-NORTH'})
+[step 2] TOOL get_activity({'project_id': 'P-NORTH'})
+[step 3] TOOL search_past_updates({'query': 'Northstar leadership update week'})
+
+[step 4] TOOL get_roadmap({'project_id': 'P-NORTH', 'query': ''})
+          -> {"error": "bad_tool_call", "tool": "get_roadmap", "args": {"project_id": "P-NORTH", "query": ""}, "detail": "get_roadmap() got an unexpected keyword argument 'project_id'"}
+
+[step 5] TOOL get_roadmap({'query': 'P-NORTH roadmap'})
+          -> {"query": "P-NORTH roadmap", "roadmap": "# Roadmap (mock ground truth) ..."}
+
+[step 6] TOOL get_norms({'query': 'Northstar PM norms'})
+
+[step 7] TOOL propose_stories({'project_id': 'P-NORTH', 'reason': 'Next sprint backlog for Northstar', 'stories': ['Implement contextual tips A/B test', 'Add analytics instrumentation for contextual tips']})
+          -> {"status":"queued_for_approval","count":2,...}
+
+[step 8] PROPOSED OUTPUT:
+**DONE:**
+**Northstar (P‑NORTH) – Weekly Leadership Status Update (Week of 2026‑07‑06)**
+...
+
+================================================================
+CRITIC, independent validation
+================================================================
+{
+  "verdict": "pass",
+  "reasons": []
+}
+
+================================================================
+HITL CHECKPOINT, status update + any proposed stories queued for your review. Nothing posted, no commitments made. Run cost ≈ $0.0044
+================================================================
+
+Saved draft -> run-output/status-update-happy.md  (for your review, nothing was posted)
+```
 
 ## How to run it
 
